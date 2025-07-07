@@ -65,6 +65,11 @@ CFLAGS=(
     "-I${GMP_STATIC_DIR}/include"
 )
 
+# Add compiler-specific flags
+if [ "$CC" = "clang" ]; then
+    CFLAGS+=("-Wno-error=newline-eof")
+fi
+
 "${CC}" "${CFLAGS[@]}" "${C_DIR}/gmp_wrapper.c" -o "${BUILD_DIR}/gmp_wrapper.o" || {
     echo "Error: Compilation failed"
     exit 1
