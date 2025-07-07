@@ -61,18 +61,6 @@ if err != nil {
 // result is []byte
 ```
 
-### Converting between big.Int
-
-```go
-// Convert from big.Int to GMP
-bigNum := big.NewInt(12345)
-gmpNum := gmp.NewInt()
-gmpNum.SetBytes(bigNum.Bytes())
-
-// Convert back
-resultBig := new(big.Int).SetBytes(gmpNum.Bytes())
-```
-
 ## Building from Source
 
 Requirements:
