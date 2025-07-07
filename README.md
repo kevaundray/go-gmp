@@ -6,13 +6,6 @@
 
 A Go wrapper for GMP's modular exponentiation. The GMP library is statically linked.
 
-## Features
-
-- **Fast modular exponentiation** - Up to 2.9x faster than Go's math/big
-- **Static linking** - Single binary, no runtime dependencies  
-- **Simple API** - Drop-in replacement for common operations
-- **100% compatible** - Tested against math/big for correctness
-
 ## Installation
 
 1. Build GMP static library:
@@ -28,6 +21,8 @@ go get github.com/kevaundray/go-gmp
 ## Usage
 
 ### Direct GMP Interface
+
+This wraps the GMP interface and allows for more flexibility.
 
 ```go
 import "github.com/kevaundray/go-gmp"
@@ -51,6 +46,8 @@ fmt.Printf("Result: %s\n", result)
 
 ### Simple Byte-oriented ModExp Wrapper
 
+This is a more restricted interface and only allows for modexp.
+
 ```go
 // For simple one-off calculations with byte arrays
 base := []byte{0xDE, 0xAD, 0xBE, 0xEF}
@@ -64,7 +61,7 @@ if err != nil {
 // result is []byte
 ```
 
-### Working with big.Int
+### Converting between big.Int
 
 ```go
 // Convert from big.Int to GMP
@@ -75,13 +72,6 @@ gmpNum.SetBytes(bigNum.Bytes())
 // Convert back
 resultBig := new(big.Int).SetBytes(gmpNum.Bytes())
 ```
-
-## API
-
-- `NewInt()` - Create a new arbitrary precision integer
-- `SetString(s, base)` - Parse string in given base
-- `SetBytes([]byte)` - Set from big-endian bytes
-- `Bytes()` - Get big-endian bytes
 
 ## Building from Source
 
