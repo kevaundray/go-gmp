@@ -1,0 +1,119 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+        body: |
+          ## Changes in this Release
+          
+          ### Installation
+          ```bash
+          go get github.com/kevaundray/go-gmp@${{ github.ref_name }}
+          ```
+          
+          ### Building from source
+          ```bash
+          cd scripts
+          ./build-static.sh
+          ./build_wrapper.sh
+          ```
+          
+          See README.md for more details.
+
+  build-artifacts:
+    needs: create-release
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: arm64
+          - os: macos-latest
+            goos: darwin
+            goarch: amd64
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+    
+    - name: Install build dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc wget
+    
+    - name: Install build dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install wget
+    
+    - name: Build GMP static library
+      run: |
+        cd scripts
+        ./build-static.sh
+    
+    - name: Build wrapper
+      run: |
+        cd scripts
+        ./build_wrapper.sh
+    
+    - name: Create tarball
+      run: |
+        tar -czf go-gmp-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz \
+          gmp-static/lib/libgmp.a \
+          gmp-static/include/gmp.h \
+          build/libgmp_wrapper.a \
+          build/gmp_wrapper.h \
+          *.go \
+          go.mod \
+          go.sum \
+          README.md \
+          LICENSE \
+          scripts/
+    
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: ./go-gmp-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
+        asset_name: go-gmp-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
+        asset_content_type: application/gzip

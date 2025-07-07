@@ -1,5 +1,9 @@
 # Go-GMP: High-Performance Modular Exponentiation
 
+[![CI](https://github.com/kevaundray/go-gmp/actions/workflows/ci.yml/badge.svg)](https://github.com/kevaundray/go-gmp/actions/workflows/ci.yml)
+[![Test](https://github.com/kevaundray/go-gmp/actions/workflows/test.yml/badge.svg)](https://github.com/kevaundray/go-gmp/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kevaundray/go-gmp)](https://goreportcard.com/report/github.com/kevaundray/go-gmp)
+
 A Go wrapper for GMP's modular exponentiation. The GMP library is statically linked.
 
 ## Features

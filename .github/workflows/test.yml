@@ -1,0 +1,106 @@
+name: Test
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-22.04, ubuntu-20.04]
+        go: ['1.21', '1.22', '1.23']
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go }}
+    
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc wget
+    
+    - name: Cache GMP build
+      uses: actions/cache@v4
+      with:
+        path: |
+          gmp-static
+          build
+        key: ${{ runner.os }}-gmp-${{ hashFiles('scripts/build-static.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-gmp-
+    
+    - name: Build GMP static library
+      run: |
+        cd scripts
+        ./build-static.sh
+    
+    - name: Build wrapper
+      run: |
+        cd scripts
+        ./build_wrapper.sh
+    
+    - name: Run tests
+      run: go test -v ./...
+    
+    - name: Run benchmarks
+      run: go test -bench=. -benchmem -run=^$
+    
+    - name: Test with race detector
+      run: go test -race -v ./...
+
+  test-macos:
+    strategy:
+      matrix:
+        os: [macos-latest, macos-13]
+        go: ['1.21', '1.23']
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go }}
+    
+    - name: Install build dependencies
+      run: |
+        brew install wget
+    
+    - name: Cache GMP build
+      uses: actions/cache@v4
+      with:
+        path: |
+          gmp-static
+          build
+        key: ${{ runner.os }}-gmp-${{ hashFiles('scripts/build-static.sh') }}
+        restore-keys: |
+          ${{ runner.os }}-gmp-
+    
+    - name: Build GMP static library
+      run: |
+        cd scripts
+        ./build-static.sh
+    
+    - name: Build wrapper
+      run: |
+        cd scripts
+        ./build_wrapper.sh
+    
+    - name: Run tests
+      run: go test -v ./...
+    
+    - name: Run benchmarks
+      run: go test -bench=. -benchmem -run=^$

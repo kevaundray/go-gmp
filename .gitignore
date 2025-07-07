@@ -1,0 +1,16 @@
+# Build artifacts
+build/
+m4-local/
+gmp-static/
+
+# Test binaries
+*.test
+test_binary
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
