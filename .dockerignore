@@ -1,0 +1,32 @@
+# Git files
+.git/
+.gitignore
+
+# Build artifacts that will be rebuilt in container
+build/
+gmp-static/
+m4-local/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+
+# Documentation
+*.md
+LICENSE
+
+# Docker files
+Dockerfile*
+docker-compose.yml
+.dockerignore
+
+# Test artifacts
+*.test
+test_binary
+
+# Claude settings
+.claude/

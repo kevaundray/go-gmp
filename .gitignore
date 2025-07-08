@@ -1,7 +1,5 @@
 # Build artifacts
 build/
-m4-local/
-gmp-static/
 
 # Test binaries
 *.test

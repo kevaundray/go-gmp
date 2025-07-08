@@ -2,7 +2,7 @@ name: Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, use-system-gmp ]
   pull_request:
     branches: [ master ]
 
@@ -27,27 +27,21 @@ jobs:
     - name: Install build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y gcc wget
+        sudo apt-get install -y gcc libgmp-dev
     
-    - name: Cache GMP build
+    - name: Cache build artifacts
       uses: actions/cache@v4
       with:
         path: |
-          gmp-static
           build
-        key: ${{ runner.os }}-gmp-${{ hashFiles('scripts/build-static.sh') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('scripts/build-system-gmp.sh') }}
         restore-keys: |
-          ${{ runner.os }}-gmp-
-    
-    - name: Build GMP static library
-      run: |
-        cd scripts
-        ./build-static.sh
+          ${{ runner.os }}-build-
     
     - name: Build wrapper
       run: |
         cd scripts
-        ./build_wrapper.sh
+        ./build-system-gmp.sh
     
     - name: Run tests
       run: go test -v ./...
@@ -77,30 +71,42 @@ jobs:
     
     - name: Install build dependencies
       run: |
-        brew install wget
+        brew install gmp
     
-    - name: Cache GMP build
+    - name: Cache build artifacts
       uses: actions/cache@v4
       with:
         path: |
-          gmp-static
           build
-        key: ${{ runner.os }}-gmp-${{ hashFiles('scripts/build-static.sh') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('scripts/build-system-gmp.sh') }}
         restore-keys: |
-          ${{ runner.os }}-gmp-
-    
-    - name: Build GMP static library
-      run: |
-        cd scripts
-        ./build-static.sh
+          ${{ runner.os }}-build-
     
     - name: Build wrapper
       run: |
         cd scripts
-        ./build_wrapper.sh
+        ./build-system-gmp.sh
     
     - name: Run tests
       run: go test -v ./...
     
     - name: Run benchmarks
       run: go test -bench=. -benchmem -run=^$
+
+  test-docker:
+    runs-on: ubuntu-22.04
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build and test in Docker
+      run: |
+        docker build -t go-gmp-test .
+        docker run --rm go-gmp-test
+    
+    - name: Run benchmarks in Docker
+      run: docker run --rm go-gmp-test go test -bench=. -benchmem -run=^$

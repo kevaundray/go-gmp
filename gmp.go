@@ -1,10 +1,8 @@
 package gmp
 
-// Static linking with full GMP for maximum performance
-// Build GMP first: ./build-static.sh
+// Uses system-installed GMP library
 
-// #cgo CFLAGS: -I./gmp-static/include
-// #cgo LDFLAGS: ${SRCDIR}/gmp-static/lib/libgmp.a
+// #cgo LDFLAGS: -lgmp
 // #include <gmp.h>
 // #include <stdlib.h>
 // 

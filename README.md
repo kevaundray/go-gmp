@@ -1,15 +1,26 @@
 # Go-GMP: Wrapper for the GMP ModExp
 
-A Go wrapper for GMP's modular exponentiation. The GMP library is statically linked and must be compiled.
+A Go wrapper for GMP's modular exponentiation. This version uses the system-installed GMP library.
+
+## Prerequisites
+
+You need to have GMP development libraries installed on your system:
+
+- **Ubuntu/Debian**: `sudo apt-get install libgmp-dev`
+- **Fedora/RHEL**: `sudo dnf install gmp-devel`
+- **macOS**: `brew install gmp`
 
 ## Installation
 
-1. Build GMP static library:
+1. Build the C wrapper:
 ```bash
-cd scripts && ./build-static.sh && ./build_wrapper.sh
+cd scripts && ./build-system-gmp.sh
 ```
 
-> NOTE: Since this doesn't use system GMP, the best way to use this library would be to include it as github sub-module instead and run the scripts locally.
+2. Install the Go package:
+```bash
+go get github.com/kevaundray/go-gmp
+```
 
 ## Usage
 
@@ -54,23 +65,26 @@ if err != nil {
 // result is []byte
 ```
 
-## Building from Source
+## Running Tests
 
-Requirements:
-- Go 1.21+
-- GCC
-- wget (For downloading GMP and M4)
-
-Build GMP:
-```bash
-cd scripts
-./build-static.sh    # Downloads and builds GMP 6.3.0
-./build_wrapper.sh   # Builds the C wrapper
-```
-
-Run tests:
+### Local Testing
 ```bash
 go test -v
+```
+
+### Docker Testing
+Test in a fresh container without installing dependencies locally:
+
+```bash
+# Using the test script
+./scripts/test-docker.sh
+
+# Or manually with Docker
+docker build -t go-gmp-test .
+docker run --rm go-gmp-test
+
+# Run benchmarks
+docker run --rm go-gmp-test go test -bench=. -benchmem -run=^$
 ```
 
 ## License

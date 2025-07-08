@@ -1,7 +1,7 @@
 package gmp
 
-// #cgo CFLAGS: -I./c -I./build
-// #cgo LDFLAGS: ${SRCDIR}/build/libgmp_wrapper.a ${SRCDIR}/gmp-static/lib/libgmp.a
+// #cgo CFLAGS: -I./c
+// #cgo LDFLAGS: ./build/gmp_wrapper.o -lgmp
 // #include "gmp_wrapper.h"
 import "C"
 import (
