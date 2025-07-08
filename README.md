@@ -6,7 +6,7 @@ A Go wrapper for GMP's modular exponentiation. The GMP library is statically lin
 
 1. Build GMP static library:
 ```bash
-cd scripts && ./build-static.sh
+cd scripts && ./build-static.sh && ./build_wrapper.sh
 ```
 
 > NOTE: Since this doesn't use system GMP, the best way to use this library would be to include it as github sub-module instead and run the scripts locally.
