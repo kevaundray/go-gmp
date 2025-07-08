@@ -1,10 +1,6 @@
-# Go-GMP: High-Performance Modular Exponentiation
+# Go-GMP: Wrapper for the GMP ModExp
 
-[![CI](https://github.com/kevaundray/go-gmp/actions/workflows/ci.yml/badge.svg)](https://github.com/kevaundray/go-gmp/actions/workflows/ci.yml)
-[![Test](https://github.com/kevaundray/go-gmp/actions/workflows/test.yml/badge.svg)](https://github.com/kevaundray/go-gmp/actions/workflows/test.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kevaundray/go-gmp)](https://goreportcard.com/report/github.com/kevaundray/go-gmp)
-
-A Go wrapper for GMP's modular exponentiation. The GMP library is statically linked.
+A Go wrapper for GMP's modular exponentiation. The GMP library is statically linked and must be compiled.
 
 ## Installation
 
@@ -13,10 +9,7 @@ A Go wrapper for GMP's modular exponentiation. The GMP library is statically lin
 cd scripts && ./build-static.sh
 ```
 
-2. Use in your project:
-```bash
-go get github.com/kevaundray/go-gmp
-```
+> NOTE: Since this doesn't use system GMP, the best way to use this library would be to include it as github sub-module instead and run the scripts locally.
 
 ## Usage
 
