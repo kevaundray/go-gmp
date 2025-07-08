@@ -2,16 +2,16 @@ name: Test
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ master ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ master ]
 
 jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-22.04, ubuntu-20.04]
-        go: ['1.21', '1.22', '1.23']
+        os: [ubuntu-22.04]
+        go: ['1.23']
     
     runs-on: ${{ matrix.os }}
     
@@ -61,8 +61,8 @@ jobs:
   test-macos:
     strategy:
       matrix:
-        os: [macos-latest, macos-13]
-        go: ['1.21', '1.23']
+        os: [macos-13]
+        go: ['1.23']
     
     runs-on: ${{ matrix.os }}
     

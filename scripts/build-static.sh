@@ -70,7 +70,7 @@ if ! command -v m4 &> /dev/null; then
     cd "m4-${M4_VERSION}"
     
     ./configure --prefix="${M4_PREFIX}" --disable-dependency-tracking
-    make -j$(nproc) >/dev/null 2>&1
+    make -j${JOBS} >/dev/null 2>&1
     make install >/dev/null 2>&1
     
     cd "../gmp-${GMP_VERSION}"
@@ -102,7 +102,16 @@ echo "  CPPFLAGS: ${CPPFLAGS}"
 ./configure "${CONFIGURE_OPTS[@]}"
 
 # Get number of cores, but limit to avoid OOM on systems with many cores
-JOBS=$(nproc)
+if command -v nproc &> /dev/null; then
+    JOBS=$(nproc)
+elif command -v sysctl &> /dev/null; then
+    # macOS
+    JOBS=$(sysctl -n hw.ncpu)
+else
+    # Fallback
+    JOBS=4
+fi
+
 if [ "$JOBS" -gt 8 ]; then
     JOBS=8
 fi
